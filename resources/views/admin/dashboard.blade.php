@@ -1,160 +1,187 @@
 <x-layouts.app title="Admin Dashboard">
 
-    {{-- HEADER --}}
+    @php
+        \Carbon\Carbon::setLocale('id');
+        $today = \Carbon\Carbon::now()->translatedFormat('l, d F Y');
+    @endphp
+
+    {{-- Header --}}
     <div class="mb-6">
-        <h1 class="text-2xl font-bold">
-            Selamat Datang, {{ auth()->user()->nama }} 👋
+        <h1 class="text-3xl font-bold text-slate-800">
+            Selamat Datang, Admin 👋
         </h1>
-        <p class="text-sm text-gray-400">
-            {{ now()->translatedFormat('l, d F Y') }}
+        <p class="text-slate-500 mt-1">
+            {{ $today }} - Berikut ringkasan data sistem poliklinik.
         </p>
     </div>
 
-    {{-- CARD STATISTIK --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    {{-- Statistik --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
-        {{-- POLI --}}
-        <div class="bg-white rounded-2xl shadow-sm p-5 relative overflow-hidden hover:shadow-md transition">
-            <div class="flex justify-between items-center mb-3">
-                <div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
-                    <i class="fas fa-hospital"></i>
+        {{-- Total Poli --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <i class="fas fa-hospital text-lg"></i>
                 </div>
+                <a href="{{ route('admin.polis.index') }}" class="text-blue-500 text-sm font-semibold">
+                    Lihat
+                </a>
             </div>
-            <h2 class="text-2xl font-bold">{{ $totalPoli }}</h2>
-            <p class="text-sm text-gray-400">Total Poli</p>
+            <h2 class="text-4xl font-bold text-slate-900">{{ $totalPoli ?? 0 }}</h2>
+            <p class="text-slate-500 mt-2 text-lg">Total Poli</p>
             <div class="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
         </div>
 
-        {{-- DOKTER --}}
-        <div class="bg-white rounded-2xl shadow-sm p-5 relative overflow-hidden hover:shadow-md transition">
-            <div class="flex justify-between items-center mb-3">
-                <div class="bg-green-100 text-green-600 p-3 rounded-xl">
-                    <i class="fas fa-user-doctor"></i>
+        {{-- Total Dokter --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i class="fas fa-user-doctor text-lg"></i>
                 </div>
+                <a href="{{ route('admin.dokter.index') }}" class="text-emerald-500 text-sm font-semibold">
+                    Lihat
+                </a>
             </div>
-            <h2 class="text-2xl font-bold">{{ $totalDokter }}</h2>
-            <p class="text-sm text-gray-400">Total Dokter</p>
-            <div class="absolute bottom-0 left-0 w-full h-1 bg-green-500"></div>
+            <h2 class="text-4xl font-bold text-slate-900">{{ $totalDokter ?? 0 }}</h2>
+            <p class="text-slate-500 mt-2 text-lg">Total Dokter</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-emerald-500"></div>
         </div>
 
-        {{-- PASIEN --}}
-        <div class="bg-white rounded-2xl shadow-sm p-5 relative overflow-hidden hover:shadow-md transition">
-            <div class="flex justify-between items-center mb-3">
-                <div class="bg-yellow-100 text-yellow-600 p-3 rounded-xl">
-                    <i class="fas fa-user"></i>
+        {{-- Total Pasien --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <i class="fas fa-bed-pulse text-lg"></i>
                 </div>
+                <a href="{{ route('admin.pasien.index') }}" class="text-amber-500 text-sm font-semibold">
+                    Lihat
+                </a>
             </div>
-            <h2 class="text-2xl font-bold">{{ $totalPasien }}</h2>
-            <p class="text-sm text-gray-400">Total Pasien</p>
-            <div class="absolute bottom-0 left-0 w-full h-1 bg-yellow-500"></div>
+            <h2 class="text-4xl font-bold text-slate-900">{{ $totalPasien ?? 0 }}</h2>
+            <p class="text-slate-500 mt-2 text-lg">Total Pasien</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-amber-500"></div>
         </div>
 
-        {{-- OBAT --}}
-        <div class="bg-white rounded-2xl shadow-sm p-5 relative overflow-hidden hover:shadow-md transition">
-            <div class="flex justify-between items-center mb-3">
-                <div class="bg-pink-100 text-pink-600 p-3 rounded-xl">
-                    <i class="fas fa-capsules"></i>
+        {{-- Total Obat --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                    <i class="fas fa-pills text-lg"></i>
                 </div>
+                <a href="{{ route('admin.obat.index') }}" class="text-pink-500 text-sm font-semibold">
+                    Lihat
+                </a>
             </div>
-            <h2 class="text-2xl font-bold">{{ $totalObat }}</h2>
-            <p class="text-sm text-gray-400">Total Obat</p>
+            <h2 class="text-4xl font-bold text-slate-900">{{ $totalObat ?? 0 }}</h2>
+            <p class="text-slate-500 mt-2 text-lg">Total Obat</p>
             <div class="absolute bottom-0 left-0 w-full h-1 bg-pink-500"></div>
         </div>
 
     </div>
 
-    {{-- CONTENT --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    {{-- Bagian bawah --}}
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-        {{-- TABEL POLI --}}
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-5">
-
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold">Daftar Poli</h3>
-                <a href="{{ route('polis.index') }}" class="text-sm text-blue-500 hover:underline font-medium">
+        {{-- Daftar Poli --}}
+        <div class="xl:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <h3 class="text-2xl font-semibold text-slate-800">Daftar Poli</h3>
+                <a href="{{ route('admin.polis.index') }}" class="text-blue-600 font-semibold hover:underline">
                     Lihat Semua →
                 </a>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="table w-full">
-                    <thead>
-                        <tr class="text-xs uppercase text-gray-400">
-                            <th>Nama Poli</th>
-                            <th>Keterangan</th>
-                            <th>Dokter</th>
+                    <thead class="bg-slate-50 text-slate-400 uppercase text-sm">
+                        <tr>
+                            <th class="px-6 py-4">Nama Poli</th>
+                            <th class="px-6 py-4">Keterangan</th>
+                            <th class="px-6 py-4 text-right">Dokter</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($polis as $poli)
-                            <tr>
-                                <td class="font-medium">{{ $poli->nama_poli }}</td>
-                                <td class="text-gray-500 text-sm">{{ Str::limit($poli->keterangan, 60) }}</td>
-                                <td>
-                                    {{-- ganti tombol dengan ini --}}
-                                    <span class="btn btn-sm bg-blue-500 text-white border-none rounded-lg px-3">
-                                        {{ $poli->dokters_count }} Dokter
+                        @forelse($polis ?? [] as $poli)
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-semibold text-slate-800">
+                                    {{ $poli->nama_poli }}
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ $poli->keterangan }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full bg-sky-100 text-sky-600 text-sm font-medium">
+                                        {{ $poli->dokters_count ?? 0 }} Dokter
                                     </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center text-gray-400">
-                                    Data belum tersedia
+                                <td colspan="3" class="text-center py-10 text-slate-400">
+                                    Belum ada data poli
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
         </div>
 
-        {{-- AKSES CEPAT --}}
-        <div class="bg-white rounded-2xl shadow-sm p-5">
+        {{-- Akses Cepat --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100">
+                <h3 class="text-2xl font-semibold text-slate-800">Akses Cepat</h3>
+            </div>
 
-            <h3 class="font-semibold mb-4">Akses Cepat</h3>
+            <div class="p-5 space-y-4">
 
-            <div class="space-y-3">
-
-                <a href="{{ route('polis.create') }}"
-                    class="flex items-center gap-3 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition">
-                    <i class="fas fa-plus text-blue-500"></i>
+                <a href="{{ route('admin.polis.create') }}"
+                    class="flex items-start gap-4 p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition">
+                    <div class="text-blue-600 text-xl mt-1">
+                        <i class="fas fa-plus"></i>
+                    </div>
                     <div>
-                        <p class="font-semibold text-sm">Tambah Poli</p>
-                        <p class="text-xs text-gray-400">Daftarkan poli baru</p>
+                        <p class="font-semibold text-slate-800">Tambah Poli</p>
+                        <p class="text-sm text-slate-500">Daftarkan poli baru</p>
                     </div>
                 </a>
 
-                <a href="{{ route('dokter.create') }}"
-                    class="flex items-center gap-3 p-3 rounded-xl bg-green-50 hover:bg-green-100 transition">
-                    <i class="fas fa-user-doctor text-green-500"></i>
+                <a href="{{ route('admin.dokter.create') }}"
+                    class="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50 hover:bg-emerald-100 transition">
+                    <div class="text-emerald-600 text-xl mt-1">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
                     <div>
-                        <p class="font-semibold text-sm">Tambah Dokter</p>
-                        <p class="text-xs text-gray-400">Daftarkan dokter baru</p>
+                        <p class="font-semibold text-slate-800">Tambah Dokter</p>
+                        <p class="text-sm text-slate-500">Daftarkan dokter baru</p>
                     </div>
                 </a>
 
-                <a href="{{ route('pasien.create') }}"
-                    class="flex items-center gap-3 p-3 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition">
-                    <i class="fas fa-user text-yellow-500"></i>
+                <a href="{{ route('admin.pasien.create') }}"
+                    class="flex items-start gap-4 p-4 rounded-2xl bg-amber-50 hover:bg-amber-100 transition">
+                    <div class="text-amber-600 text-xl mt-1">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
                     <div>
-                        <p class="font-semibold text-sm">Tambah Pasien</p>
-                        <p class="text-xs text-gray-400">Daftarkan pasien baru</p>
+                        <p class="font-semibold text-slate-800">Tambah Pasien</p>
+                        <p class="text-sm text-slate-500">Daftarkan pasien baru</p>
                     </div>
                 </a>
 
-                <a href="{{ route('obat.create') }}"
-                    class="flex items-center gap-3 p-3 rounded-xl bg-pink-50 hover:bg-pink-100 transition">
-                    <i class="fas fa-capsules text-pink-500"></i>
+                <a href="{{ route('admin.obat.create') }}"
+                    class="flex items-start gap-4 p-4 rounded-2xl bg-pink-50 hover:bg-pink-100 transition">
+                    <div class="text-pink-600 text-xl mt-1">
+                        <i class="fas fa-plus"></i>
+                    </div>
                     <div>
-                        <p class="font-semibold text-sm">Tambah Obat</p>
-                        <p class="text-xs text-gray-400">Tambah data obat</p>
+                        <p class="font-semibold text-slate-800">Tambah Obat</p>
+                        <p class="text-sm text-slate-500">Tambahkan data obat baru</p>
                     </div>
                 </a>
 
             </div>
-
         </div>
 
     </div>

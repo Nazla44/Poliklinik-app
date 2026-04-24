@@ -1,5 +1,3 @@
-@props(['title' => 'Dashboard'])
-
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 
@@ -11,8 +9,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    @vite(['resources/js/app.js', 'resources/css/app.css'])
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
+    @vite(['resources/js/app.js','resources/css/app.css'])
 </head>
 
 <body>
@@ -30,22 +29,22 @@
         {{-- MAIN --}}
         <div class="main-content">
 
-            @include('components.partials.header', ['title' => $title ?? 'Dashboard'])
+            @include('components.partials.header')
 
             <div class="main-scroll">
 
                 @if(session('success'))
-                    <div class="alert alert-success mb-4 rounded-xl shadow-sm">
-                        <i class="fas fa-check-circle"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
+                <div class="alert alert-success mb-4 rounded-xl shadow-sm">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="alert alert-error mb-4 rounded-xl shadow-sm">
-                        <i class="fas fa-circle-xmark"></i>
-                        <span>{{ session('error') }}</span>
-                    </div>
+                <div class="alert alert-error mb-4 rounded-xl shadow-sm">
+                    <i class="fas fa-circle-xmark"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
                 @endif
 
                 {{ $slot }}
@@ -59,32 +58,32 @@
     </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('appSidebar')
-            const overlay = document.getElementById('sidebarOverlay')
+        function toggleSidebar(){
+            const sidebar=document.getElementById('appSidebar')
+            const overlay=document.getElementById('sidebarOverlay')
 
             sidebar.classList.toggle('open')
 
-            overlay.style.display =
-                sidebar.classList.contains('open')
-                    ? 'block'
-                    : 'none'
+            overlay.style.display=
+            sidebar.classList.contains('open')
+            ? 'block'
+            : 'none'
         }
 
-        function toggleFullscreen() {
-            const icon = document.getElementById('fsIcon')
+        function toggleFullscreen(){
+            const icon=document.getElementById('fsIcon')
 
-            if (!document.fullscreenElement) {
+            if(!document.fullscreenElement){
                 document.documentElement.requestFullscreen()
-                icon.className = 'fas fa-compress'
+                icon.className='fas fa-compress'
             }
-            else {
+            else{
                 document.exitFullscreen()
-                icon.className = 'fas fa-expand'
+                icon.className='fas fa-expand'
             }
         }
     </script>
-
+ 
     @stack('scripts')
 
 </body>

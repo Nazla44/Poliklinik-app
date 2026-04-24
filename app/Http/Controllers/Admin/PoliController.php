@@ -10,7 +10,8 @@ class PoliController extends Controller
 {
     public function index()
     {
-        $polis = Poli::all();
+        $polis = Poli::latest()->get();
+
         return view('admin.polis.index', compact('polis'));
     }
 
@@ -22,42 +23,68 @@ class PoliController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_poli' => 'required',
-            'keterangan' => 'nullable',
+            'nama_poli'  => 'required|string|max:25',
+            'keterangan' => 'nullable|string',
+            'tarif'      => 'required|integer|min:0',
+        ], [
+            'nama_poli.required' => 'Nama poli wajib diisi.',
+            'tarif.required'     => 'Tarif wajib diisi.',
+            'tarif.integer'      => 'Tarif harus berupa angka.',
         ]);
 
+        $totalPoli = Poli::count();
+        $kodePoli = chr(65 + $totalPoli);
+
+        $validated['kode_poli'] = $kodePoli;
+
         Poli::create($validated);
-        return redirect()->route('polis.index')->with('success', 'Poli berhasil ditambahkan')->with('type', 'success');
+
+        return redirect()
+            ->route('admin.polis.index')
+            ->with('success', 'Poli berhasil ditambahkan.');
     }
 
     public function show(string $id)
     {
-        //
+        $poli = Poli::findOrFail($id);
+
+        return view('admin.polis.show', compact('poli'));
     }
 
     public function edit(string $id)
     {
         $poli = Poli::findOrFail($id);
+
         return view('admin.polis.edit', compact('poli'));
     }
-
 
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'nama_poli' => 'required',
-            'keterangan' => 'nullable',
+            'nama_poli'  => 'required|string|max:25',
+            'keterangan' => 'nullable|string',
+            'tarif'      => 'required|integer|min:0',
+        ], [
+            'nama_poli.required' => 'Nama poli wajib diisi.',
+            'tarif.required'     => 'Tarif wajib diisi.',
+            'tarif.integer'      => 'Tarif harus berupa angka.',
         ]);
 
         $poli = Poli::findOrFail($id);
         $poli->update($validated);
-        return redirect()->route('polis.index')->with('success', 'Poli berhasil diperbarui');
+
+        return redirect()
+            ->route('admin.polis.index')
+            ->with('success', 'Poli berhasil diupdate.');
     }
 
     public function destroy(string $id)
     {
         $poli = Poli::findOrFail($id);
-        $poli->delete($poli);
-        return redirect()->route('polis.index')->with('success', 'Poli berhasil dihapus !');
+        $poli->delete();
+
+        return redirect()
+            ->route('admin.polis.index')
+            ->with('success', 'Poli berhasil dihapus.');
     }
 }

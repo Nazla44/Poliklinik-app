@@ -6,58 +6,78 @@ use App\Http\Controllers\Controller;
 use App\Models\DaftarPoli;
 use App\Models\JadwalPeriksa;
 use App\Models\Poli;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DaftarPoliController extends Controller
 {
-    public function index()
+    public function create()
     {
-        $riwayat = DaftarPoli::where('id_pasien', Auth::id())
-            ->with(['jadwalPeriksa.dokter.poli'])
-            ->latest()
-            ->get();
+        $pasien = User::findOrFail(Auth::id());
 
-        $polis = Poli::all();
+        $poli = Poli::orderBy('nama_poli')->get();
 
-        return view('pasien.daftar-poli.index', compact('riwayat', 'polis'));
+        $jadwals = JadwalPeriksa::with(['dokter', 'dokter.poli'])
+            ->get()
+            ->map(function ($jadwal) {
+                $jadwal->id_poli = $jadwal->dokter->id_poli ?? null;
+                $jadwal->nama_dokter = $jadwal->dokter->nama ?? '-';
+                $jadwal->nama_poli = $jadwal->dokter->poli->nama_poli ?? '-';
+                $jadwal->kode_poli = $jadwal->dokter->poli->kode_poli ?? 'A';
+                return $jadwal;
+            });
+
+        return view('pasien.daftar-poli', compact('pasien', 'poli', 'jadwals'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id_poli' => 'required|exists:poli,id',
             'id_jadwal' => 'required|exists:jadwal_periksa,id',
-            'keluhan' => 'required|string|max:500',
+            'keluhan'   => 'required|string',
         ]);
 
-        // Generate no antrian otomatis
-        $lastAntrian = DaftarPoli::where('id_jadwal', $request->id_jadwal)
-            ->whereDate('created_at', today())
-            ->count();
-        $noAntrian = $lastAntrian + 1;
+        $pasien = User::findOrFail(Auth::id());
 
-        DaftarPoli::create([
-            'id_pasien' => Auth::id(),
-            'id_jadwal' => $request->id_jadwal,
-            'keluhan' => $request->keluhan,
-            'no_antrian' => $noAntrian,
-        ]);
+        $antrianAktif = DaftarPoli::where('id_pasien', $pasien->id)
+            ->whereDoesntHave('periksa')
+            ->exists();
 
-        return redirect()->route('daftar-poli.index')
-            ->with('success', 'Berhasil Mendaftar ke Poli!');
-    }
+        if ($antrianAktif) {
+            return back()->with('error', 'Anda masih memiliki antrian aktif dan belum dapat mendaftar lagi.');
+        }
 
-    public function getJadwal($id_poli)
-    {
-        $jadwals = JadwalPeriksa::whereHas('dokter', fn($q) => $q->where('id_poli', $id_poli))
-            ->with('dokter')
-            ->get()
-            ->map(fn($j) => [
-                'id' => $j->id,
-                'label' => "{$j->hari} | {$j->jam_mulai} - {$j->jam_selesai} | Dr. {$j->dokter->nama}",
+        DB::beginTransaction();
+
+        try {
+            $jadwal = JadwalPeriksa::with('dokter.poli')
+                ->findOrFail($request->id_jadwal);
+
+            $jumlah = DaftarPoli::where('id_jadwal', $request->id_jadwal)
+                ->whereDate('created_at', now('Asia/Jakarta')->toDateString())
+                ->lockForUpdate()
+                ->count();
+
+            $nomor = $jumlah + 1;
+
+            DaftarPoli::create([
+                'id_pasien'  => $pasien->id,
+                'id_jadwal'  => $request->id_jadwal,
+                'keluhan'    => $request->keluhan,
+                'no_antrian' => $nomor,
             ]);
 
-        return response()->json($jadwals);
+            DB::commit();
+
+            return redirect()
+                ->route('pasien.dashboard')
+                ->with('success', 'Berhasil mendaftar ke poli!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Terjadi kesalahan saat mendaftar poli: ' . $e->getMessage());
+        }
     }
 }

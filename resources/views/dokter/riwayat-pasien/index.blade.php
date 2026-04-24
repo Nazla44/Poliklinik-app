@@ -1,50 +1,72 @@
 <x-layouts.app title="Riwayat Pasien">
 
     <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-slate-800">Riwayat Pasien</h2>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Riwayat Pasien</h1>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a href="{{ route('dokter.riwayat-pasien.export') }}"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Export Excel
+            </a>
+        </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md rounded-2xl">
-        <div class="card-body p-0">
-            <div class="overflow-x-auto">
-                <table class="table w-full">
-                    <thead class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wider">
-                        <tr>
-                            <th class="px-6 py-4">No Antrian</th>
-                            <th class="px-6 py-4">Nama Pasien</th>
-                            <th class="px-6 py-4">Keluhan</th>
-                            <th class="px-6 py-4">Tanggal Periksa</th>
-                            <th class="px-6 py-4">Biaya</th>
-                            <th class="px-6 py-4 text-right">Aksi</th>
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">No Antrian</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">Nama Pasien</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">Keluhan</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">Tanggal Periksa
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">Biaya</th>
+                        <th class="px-6 py-4 text-right text-xs font-semibold uppercase text-slate-500">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($riwayatPasien as $item)
+                        <tr class="border-t border-slate-100 hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 text-slate-600">
+                                {{ $item->daftarPoli->no_antrian ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 font-medium text-slate-800">
+                                {{ $item->daftarPoli->pasien->nama ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-600">
+                                {{ $item->daftarPoli->keluhan ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-600">
+                                {{ \Carbon\Carbon::parse($item->tgl_periksa)->format('d/m/Y') }}
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-600">
+                                Rp{{ number_format($item->biaya_periksa ?? 0, 0, ',', '.') }}
+                            </td>
+
+                            <td class="px-6 py-4 text-right">
+                                <a href="{{ route('dokter.riwayat-pasien.show', $item->id) }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition">
+                                    <i class="fas fa-eye"></i>
+                                    Detail
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($riwayats as $riwayat)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4">{{ $riwayat->daftarPoli->no_antrian ?? '-' }}</td>
-                                <td class="px-6 py-4 font-semibold">{{ $riwayat->daftarPoli->pasien->nama ?? '-' }}</td>
-                                <td class="px-6 py-4 text-slate-500">{{ $riwayat->daftarPoli->keluhan ?? '-' }}</td>
-                                <td class="px-6 py-4">{{ \Carbon\Carbon::parse($riwayat->tgl_periksa)->format('d M Y') }}
-                                </td>
-                                <td class="px-6 py-4">Rp {{ number_format($riwayat->biaya_periksa, 0, ',', '.') }}</td>
-                                <td class="px-6 py-4 text-right">
-                                    <a href="#"
-                                        class="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white border-none rounded-lg px-4">
-                                        <i class="fas fa-eye"></i> Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-14 text-slate-400">
-                                    <i class="fas fa-inbox text-3xl mb-3 block"></i>
-                                    Belum ada riwayat pemeriksaan
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-16 text-center text-slate-400">
+                                Belum ada riwayat pasien.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
