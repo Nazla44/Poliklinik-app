@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -50,11 +50,11 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'nama'     => ['required', 'string', 'max:255'],
-            'alamat'   => ['required', 'string', 'max:255'],
-            'no_ktp'   => ['required', 'string', 'max:30', 'unique:users,no_ktp'],
-            'no_hp'    => ['required', 'string', 'max:20'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'nama' => ['required', 'string', 'max:255'],
+            'alamat' => ['required', 'string', 'max:255'],
+            'no_ktp' => ['required', 'string', 'max:30', 'unique:users,no_ktp'],
+            'no_hp' => ['required', 'string', 'max:20'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
@@ -68,14 +68,14 @@ class AuthController extends Controller
         $newNoRm = 'RM' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
 
         User::create([
-            'nama'     => $request->nama,
-            'alamat'   => $request->alamat,
-            'no_ktp'   => $request->no_ktp,
-            'no_hp'    => $request->no_hp,
-            'no_rm'    => $newNoRm,
-            'email'    => $request->email,
+            'nama' => $request->nama,
+            'alamat' => $request->alamat,
+            'no_ktp' => $request->no_ktp,
+            'no_hp' => $request->no_hp,
+            'no_rm' => $newNoRm,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'pasien',
+            'role' => 'pasien',
         ]);
 
         return redirect()

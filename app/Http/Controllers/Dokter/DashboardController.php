@@ -15,6 +15,7 @@ class DashboardController extends Controller
     {
         Carbon::setLocale('id');
         $dokterId = Auth::id();
+        $dokter = Auth::user();
 
         $hariIniIndo = Carbon::now('Asia/Jakarta')->translatedFormat('l');
         $hariIniEnglish = Carbon::now('Asia/Jakarta')->format('l');
@@ -28,30 +29,31 @@ class DashboardController extends Controller
             ->get();
 
         $totalPasienHariIni = DaftarPoli::whereHas('jadwalPeriksa', function ($query) use ($dokterId, $hariIniIndo, $hariIniEnglish) {
-                $query->where('id_dokter', $dokterId)
-                    ->where(function ($q) use ($hariIniIndo, $hariIniEnglish) {
-                        $q->where('hari', $hariIniIndo)
-                            ->orWhere('hari', $hariIniEnglish);
-                    });
-            })
+            $query->where('id_dokter', $dokterId)
+                ->where(function ($q) use ($hariIniIndo, $hariIniEnglish) {
+                    $q->where('hari', $hariIniIndo)
+                        ->orWhere('hari', $hariIniEnglish);
+                });
+        })
             ->whereDoesntHave('periksa')
             ->count();
 
         $totalRiwayat = Periksa::whereHas('daftarPoli.jadwalPeriksa', function ($query) use ($dokterId, $hariIniIndo, $hariIniEnglish) {
-                $query->where('id_dokter', $dokterId)
-                    ->where(function ($q) use ($hariIniIndo, $hariIniEnglish) {
-                        $q->where('hari', $hariIniIndo)
-                            ->orWhere('hari', $hariIniEnglish);
-                    });
-            })
+            $query->where('id_dokter', $dokterId)
+                ->where(function ($q) use ($hariIniIndo, $hariIniEnglish) {
+                    $q->where('hari', $hariIniIndo)
+                        ->orWhere('hari', $hariIniEnglish);
+                });
+        })
             ->count();
 
         return view('dokter.dashboard', [
-            'today'               => Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y'),
-            'totalJadwal'         => $jadwals->count(),
-            'totalPasienHariIni'  => $totalPasienHariIni,
-            'totalRiwayat'        => $totalRiwayat,
-            'jadwals'             => $jadwals,
+            'today' => Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y'),
+            'dokter' => $dokter,
+            'totalJadwal' => $jadwals->count(),
+            'totalPasienHariIni' => $totalPasienHariIni,
+            'totalRiwayat' => $totalRiwayat,
+            'jadwals' => $jadwals,
         ]);
     }
 }

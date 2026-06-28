@@ -6,7 +6,9 @@
     @endphp
 
     <div class="mb-6">
-        <h1 class="text-3xl font-bold text-slate-800">Selamat Datang, Dokter 👋</h1>
+        <h1 class="text-3xl font-bold text-slate-800">
+            Selamat Datang, Dokter {{ $dokter->nama ?? 'Dokter' }}
+        </h1>
         <p class="text-slate-500 mt-1">{{ $today }} - Berikut ringkasan aktivitas praktik Anda hari ini.</p>
     </div>
 
@@ -61,7 +63,8 @@
         <div class="xl:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                 <h3 class="text-2xl font-semibold text-slate-800">Jadwal Periksa</h3>
-                <a href="{{ route('dokter.jadwal-periksa.index') }}" class="text-blue-600 font-semibold hover:underline">
+                <a href="{{ route('dokter.jadwal-periksa.index') }}"
+                    class="text-blue-600 font-semibold hover:underline">
                     Lihat Semua →
                 </a>
             </div>

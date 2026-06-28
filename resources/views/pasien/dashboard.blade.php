@@ -17,7 +17,7 @@
 
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-slate-800">
-            Dashboard Pasien
+            Selamat Datang, {{ $pasien->nama ?? 'Pasien' }}
         </h1>
     </div>
 
@@ -100,14 +100,12 @@
                             SEDANG DILAYANI
                         </div>
 
-                        <div class="text-3xl font-bold"
-                             id="current-antrian-banner"
-                             data-jadwal-id="{{ $antrianAktif->id_jadwal }}"
-                             data-kode-poli="{{ $kodePoliAktif }}"
-                             data-current-antrian="{{ $antrianAktif->jadwalPeriksa->current_antrian ?? 0 }}"
-                             data-hari="{{ strtolower(trim($antrianAktif->jadwalPeriksa->hari ?? '')) }}"
-                             data-jam-mulai="{{ \Carbon\Carbon::parse($antrianAktif->jadwalPeriksa->jam_mulai)->format('H:i:s') }}"
-                             data-jam-selesai="{{ \Carbon\Carbon::parse($antrianAktif->jadwalPeriksa->jam_selesai)->format('H:i:s') }}">
+                        <div class="text-3xl font-bold" id="current-antrian-banner"
+                            data-jadwal-id="{{ $antrianAktif->id_jadwal }}" data-kode-poli="{{ $kodePoliAktif }}"
+                            data-current-antrian="{{ $antrianAktif->jadwalPeriksa->current_antrian ?? 0 }}"
+                            data-hari="{{ strtolower(trim($antrianAktif->jadwalPeriksa->hari ?? '')) }}"
+                            data-jam-mulai="{{ \Carbon\Carbon::parse($antrianAktif->jadwalPeriksa->jam_mulai)->format('H:i:s') }}"
+                            data-jam-selesai="{{ \Carbon\Carbon::parse($antrianAktif->jadwalPeriksa->jam_selesai)->format('H:i:s') }}">
                             {{ $sedangDilayaniAktif }}
                         </div>
                     </div>
@@ -138,7 +136,7 @@
             </div>
 
             <a href="{{ route('pasien.daftar-poli.create') }}"
-               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition">
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition">
                 <i class="fas fa-plus"></i>
                 Daftar Poli
             </a>
@@ -221,13 +219,13 @@
                             </td>
 
                             <td class="px-6 py-4">
-                                <span class="current-antrian-table px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-bold border border-blue-100"
-                                      data-jadwal-id="{{ $jadwal->id }}"
-                                      data-kode-poli="{{ $kodePoliJadwal }}"
-                                      data-current-antrian="{{ $jadwal->current_antrian ?? 0 }}"
-                                      data-hari="{{ strtolower(trim($jadwal->hari ?? '')) }}"
-                                      data-jam-mulai="{{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i:s') }}"
-                                      data-jam-selesai="{{ \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i:s') }}">
+                                <span
+                                    class="current-antrian-table px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-bold border border-blue-100"
+                                    data-jadwal-id="{{ $jadwal->id }}" data-kode-poli="{{ $kodePoliJadwal }}"
+                                    data-current-antrian="{{ $jadwal->current_antrian ?? 0 }}"
+                                    data-hari="{{ strtolower(trim($jadwal->hari ?? '')) }}"
+                                    data-jam-mulai="{{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i:s') }}"
+                                    data-jam-selesai="{{ \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i:s') }}">
                                     {{ $labelAntrian }}
                                 </span>
                             </td>
@@ -247,107 +245,107 @@
     </div>
 
     @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const hariMapJs = {
-                sunday: 'minggu',
-                monday: 'senin',
-                tuesday: 'selasa',
-                wednesday: 'rabu',
-                thursday: 'kamis',
-                friday: 'jumat',
-                saturday: 'sabtu'
-            };
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const hariMapJs = {
+                    sunday: 'minggu',
+                    monday: 'senin',
+                    tuesday: 'selasa',
+                    wednesday: 'rabu',
+                    thursday: 'kamis',
+                    friday: 'jumat',
+                    saturday: 'sabtu'
+                };
 
-            function getJakartaNow() {
-                const now = new Date();
-                const jakartaString = now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
-                return new Date(jakartaString);
-            }
-
-            function pad(num) {
-                return String(num).padStart(2, '0');
-            }
-
-            function getHariSekarangJakarta(dateObj) {
-                const englishDay = dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                return hariMapJs[englishDay] || englishDay;
-            }
-
-            function getTimeString(dateObj) {
-                return `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
-            }
-
-            function updateElementByTime(el) {
-                const hari = (el.dataset.hari || '').toLowerCase().trim();
-                const jamMulai = el.dataset.jamMulai || '00:00:00';
-                const jamSelesai = el.dataset.jamSelesai || '00:00:00';
-                const kodePoli = el.dataset.kodePoli || 'B';
-                const currentAntrian = parseInt(el.dataset.currentAntrian || '0', 10);
-
-                const now = getJakartaNow();
-                const hariSekarang = getHariSekarangJakarta(now);
-                const jamSekarang = getTimeString(now);
-
-                if (hari !== hariSekarang) {
-                    el.innerText = 'Belum mulai';
-                    return;
+                function getJakartaNow() {
+                    const now = new Date();
+                    const jakartaString = now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
+                    return new Date(jakartaString);
                 }
 
-                if (jamSekarang < jamMulai) {
-                    el.innerText = 'Belum mulai';
-                    return;
+                function pad(num) {
+                    return String(num).padStart(2, '0');
                 }
 
-                if (jamSekarang > jamSelesai) {
-                    el.innerText = 'Selesai';
-                    return;
+                function getHariSekarangJakarta(dateObj) {
+                    const englishDay = dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                    return hariMapJs[englishDay] || englishDay;
                 }
 
-                el.innerText = `${kodePoli}-${currentAntrian}`;
-            }
-
-            function refreshAllAntrianByTime() {
-                document.querySelectorAll('.current-antrian-table').forEach(updateElementByTime);
-
-                const bannerEl = document.getElementById('current-antrian-banner');
-                if (bannerEl) {
-                    updateElementByTime(bannerEl);
+                function getTimeString(dateObj) {
+                    return `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
                 }
-            }
 
-            refreshAllAntrianByTime();
-            setInterval(refreshAllAntrianByTime, 1000);
-            
-// FRONT END REALTIME
-            if (typeof window.Echo !== 'undefined') {
-                window.Echo.channel('antrian-channel')
-                    .listen('.AntrianUpdated', (data) => {
-                        console.log('Realtime diterima:', data);
+                function updateElementByTime(el) {
+                    const hari = (el.dataset.hari || '').toLowerCase().trim();
+                    const jamMulai = el.dataset.jamMulai || '00:00:00';
+                    const jamSelesai = el.dataset.jamSelesai || '00:00:00';
+                    const kodePoli = el.dataset.kodePoli || 'B';
+                    const currentAntrian = parseInt(el.dataset.currentAntrian || '0', 10);
 
-                        const tableEl = document.querySelector(
-                            `.current-antrian-table[data-jadwal-id="${data.jadwal_id}"]`
-                        );
+                    const now = getJakartaNow();
+                    const hariSekarang = getHariSekarangJakarta(now);
+                    const jamSekarang = getTimeString(now);
 
-                        if (tableEl) {
-                            tableEl.dataset.currentAntrian = data.current_antrian;
-                            updateElementByTime(tableEl);
-                        }
+                    if (hari !== hariSekarang) {
+                        el.innerText = 'Belum mulai';
+                        return;
+                    }
 
-                        @if($antrianAktif)
-                            if (String(data.jadwal_id) === String("{{ $antrianAktif->id_jadwal }}")) {
-                                const bannerEl = document.getElementById('current-antrian-banner');
+                    if (jamSekarang < jamMulai) {
+                        el.innerText = 'Belum mulai';
+                        return;
+                    }
 
-                                if (bannerEl) {
-                                    bannerEl.dataset.currentAntrian = data.current_antrian;
-                                    updateElementByTime(bannerEl);
-                                }
+                    if (jamSekarang > jamSelesai) {
+                        el.innerText = 'Selesai';
+                        return;
+                    }
+
+                    el.innerText = `${kodePoli}-${currentAntrian}`;
+                }
+
+                function refreshAllAntrianByTime() {
+                    document.querySelectorAll('.current-antrian-table').forEach(updateElementByTime);
+
+                    const bannerEl = document.getElementById('current-antrian-banner');
+                    if (bannerEl) {
+                        updateElementByTime(bannerEl);
+                    }
+                }
+
+                refreshAllAntrianByTime();
+                setInterval(refreshAllAntrianByTime, 1000);
+
+                // FRONT END REALTIME
+                if (typeof window.Echo !== 'undefined') {
+                    window.Echo.channel('antrian-channel')
+                        .listen('.AntrianUpdated', (data) => {
+                            console.log('Realtime diterima:', data);
+
+                            const tableEl = document.querySelector(
+                                `.current-antrian-table[data-jadwal-id="${data.jadwal_id}"]`
+                            );
+
+                            if (tableEl) {
+                                tableEl.dataset.currentAntrian = data.current_antrian;
+                                updateElementByTime(tableEl);
                             }
-                        @endif
-                    });
-            }
-        });
-    </script>
+
+                            @if($antrianAktif)
+                                if (String(data.jadwal_id) === String("{{ $antrianAktif->id_jadwal }}")) {
+                                    const bannerEl = document.getElementById('current-antrian-banner');
+
+                                    if (bannerEl) {
+                                        bannerEl.dataset.currentAntrian = data.current_antrian;
+                                        updateElementByTime(bannerEl);
+                                    }
+                                }
+                            @endif
+                        });
+                }
+            });
+        </script>
     @endpush
 
 </x-layouts.app>

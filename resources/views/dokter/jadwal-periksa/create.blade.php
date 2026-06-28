@@ -48,7 +48,8 @@
                 <label for="jam_mulai" class="block text-sm font-semibold text-slate-700 mb-2">
                     Jam Mulai <span class="text-red-500">*</span>
                 </label>
-                <input type="time" id="jam_mulai" name="jam_mulai" value="{{ old('jam_mulai') }}" step="60" required
+                <input type="time" id="jam_mulai" name="jam_mulai" value="{{ old('jam_mulai') }}" step="60" lang="id"
+                    required
                     class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 @error('jam_mulai')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -60,7 +61,7 @@
                     Jam Selesai <span class="text-red-500">*</span>
                 </label>
                 <input type="time" id="jam_selesai" name="jam_selesai" value="{{ old('jam_selesai') }}" step="60"
-                    required
+                    lang="id" required
                     class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 @error('jam_selesai')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
